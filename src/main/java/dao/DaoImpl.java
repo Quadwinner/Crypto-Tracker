@@ -113,6 +113,50 @@ public class DaoImpl implements Dao {
 		}
 		return currencyId;
 	}
+	
+	@Override
+	public void insertCurrencyLink(int userId, int currencyId) {
+		String sql = "insert into currency_links (user_id, currency_id) values (?,?)";
+		try {
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setInt(1, userId);
+			ps.setInt(2, currencyId);
+			ps.execute();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Override
+	public int getLinkByCurrency(String symbol, int userId) {
+		int linkId = 0;
+		int currencyId = getCurrencyBySymbol(symbol);
+		String sql = "select currency_link_id from currency_links where currency_id = ? and user_id = ?";
+		try {
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setInt(1, currencyId);
+			ps.setInt(2, userId);
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+				linkId = rs.getInt(1);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return linkId;
+	}
+	
+	@Override
+	public void deleteCurrencyLink(int linkId) {
+		String sql = "delete from currency_links where currency_link_id = ?";
+		try {
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setInt(1, linkId);
+			ps.execute();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 
 	@Override
 	public List<String> getCurrenciesByUser(int userId) {

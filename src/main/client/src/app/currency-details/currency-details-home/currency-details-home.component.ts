@@ -44,7 +44,10 @@ export class CurrencyDetailsHomeComponent implements OnInit {
   }
 
   handleAddCurrency() {
-    this.getCurrenciesService.insertCurrency(this.symbol).subscribe((response: any) => {
+    const data = {
+      symbol: this.symbol
+    };
+    this.getCurrenciesService.insertCurrency(data).subscribe((response: any) => {
       this.router.navigateByUrl('');
     });
   }

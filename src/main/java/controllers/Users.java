@@ -19,7 +19,7 @@ import util.ConnectionFactory;
 
 public class Users {
 
-	public static void Register(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+	public static void register(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		Connection conn = ConnectionFactory.getConnection();
 		Dao dao = new DaoImpl(conn);
 		ObjectMapper om = new ObjectMapper();
@@ -33,12 +33,11 @@ public class Users {
 		}
 	}
 	
-	public static void Login(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+	public static void login(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		Connection conn = ConnectionFactory.getConnection();
 		Dao dao = new DaoImpl(conn);
 		ObjectMapper om = new ObjectMapper();
 		JsonNode jsonNode = om.readTree(req.getReader());
-		HttpSession session = req.getSession();
 		String username = jsonNode.get("username").asText();
 		String password = jsonNode.get("password").asText();
 		User user = dao.getUserByUsername(username);
@@ -47,20 +46,19 @@ public class Users {
 		} else if (!user.getPassword().equals(password)) {
 			res.setStatus(400);
 		} else {
+			HttpSession session = req.getSession();
 			session.setAttribute("user", user);
 			res.setStatus(200);
 			res.getWriter().write(om.writeValueAsString(user));
 		}
 	}
 	
-	public static void Logout(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+	public static void logout(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		HttpSession session = req.getSession(false);
 		if (session == null) {
 			res.setStatus(400);
-		} else if (session.getAttribute("user") == null) {
-			res.setStatus(400);
 		} else {
-			session.setAttribute("user", null);
+			session.invalidate();
 			res.setStatus(200);
 		}
 	}
