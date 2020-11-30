@@ -4,10 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build --prod",
-    "postbuild": "npm run deploy",
-    "predeploy": "rimraf ../cryptotracker/src/main/resources/static && mkdirp ../cryptotracker/src/main/resources/static",
-    "deploy": "copyfiles -f dist/** ../cryptotracker/src/main/resources/static",
+    "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
