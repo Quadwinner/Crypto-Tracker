@@ -19,17 +19,64 @@ public class DaoImpl implements Dao {
 	
 	@Override
 	public int insertUser(User user) {
-		return 0;
+		int insertId = 0;
+		String sql = "insert into users (username, password, email) values (?,?,?)";
+		try {
+			PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			ps.setString(1, user.getUsername());
+			ps.setString(2, user.getPassword());
+			ps.setString(3, user.getEmail());
+			ps.execute();
+			ResultSet rs = ps.getGeneratedKeys();
+			if (rs.next()) {
+				insertId = rs.getInt(1);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return insertId;
 	}
 
 	@Override
 	public User getUserById(int userId) {
-		return null;
+		User user = new User();
+		String sql = "select user_id, username, password, email from users where user_id = ?";
+		try {
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setInt(1, userId);
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+				user.setUserId(rs.getInt(1));
+				user.setUsername(rs.getString(2));
+				user.setPassword(rs.getString(3));
+				user.setEmail(rs.getString(4));
+				user.setPortfolio(getCurrenciesByUser(rs.getInt(1)));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return user;
 	}
 
 	@Override
 	public User getUserByUsername(String username) {
-		return null;
+		User user = new User();
+		String sql = "select user_id, username, password, email from users where username = ?";
+		try {
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setString(1, username);
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+				user.setUserId(rs.getInt(1));
+				user.setUsername(rs.getString(2));
+				user.setPassword(rs.getString(3));
+				user.setEmail(rs.getString(4));
+				user.setPortfolio(getCurrenciesByUser(rs.getInt(1)));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return user;
 	}
 
 	@Override
